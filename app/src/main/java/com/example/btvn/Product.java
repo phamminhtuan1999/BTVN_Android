@@ -1,9 +1,10 @@
 package com.example.btvn;
 
 public class Product {
-    private String ID, productName, productPrice;
+    int ID;
+    private String productName, productPrice;
 
-    public Product(String ID, String productName, String productPrice) {
+    public Product(int ID, String productName, String productPrice) {
         this.ID = ID;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -18,11 +19,11 @@ public class Product {
 
     }
 
-    public String getID() {
+    public int getID() {
         return ID;
     }
 
-    public void setID(String ID) {
+    public void setID(int ID) {
         this.ID = ID;
     }
 

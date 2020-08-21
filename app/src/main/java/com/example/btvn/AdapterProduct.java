@@ -15,10 +15,11 @@ import java.util.List;
 public class AdapterProduct extends RecyclerView.Adapter<AdapterProduct.ProductViewHolder> {
     private Context mContext;
     private Cursor mCursor;
+    private ProductDBHelper mProductDBHelper;
 
-    public AdapterProduct(Context context, Cursor cursor) {
+    public AdapterProduct(Context context, ProductDBHelper productDBHelper) {
         mContext = context;
-        mCursor = cursor;
+        mProductDBHelper = productDBHelper;
     }
 
     @NonNull
@@ -30,21 +31,22 @@ public class AdapterProduct extends RecyclerView.Adapter<AdapterProduct.ProductV
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        if (!mCursor.moveToPosition(position)) {
-            return;
-        }
-
-        String name = mCursor.getString(mCursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_NAME));
-        String price = mCursor.getString(mCursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRICE));
-        String id = mCursor.getString(mCursor.getColumnIndex(ProductContract.ProductEntry._ID));
-        holder.tvID.setText("ID: "+id);
-        holder.tvName.setText("Tên: "+name);
-        holder.tvPrice.setText("Giá: "+price);
+        Product currentProduct = mProductDBHelper.query(position);
+//        if (!mCursor.moveToPosition(position)) {
+//            return;
+//        }
+//
+//        String name = mCursor.getString(mCursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_NAME));
+//        String price = mCursor.getString(mCursor.getColumnIndex(ProductContract.ProductEntry.COLUMN_PRICE));
+//        String id = mCursor.getString(mCursor.getColumnIndex(ProductContract.ProductEntry._ID));
+        holder.tvID.setText("ID: "+ currentProduct.getID());
+        holder.tvName.setText("Tên: "+ currentProduct.getProductName());
+        holder.tvPrice.setText("Giá: "+ currentProduct.getProductPrice());
     }
 
     @Override
     public int getItemCount() {
-        return mCursor.getCount();
+        return (int) mProductDBHelper.count();
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder{

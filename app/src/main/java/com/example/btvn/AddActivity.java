@@ -24,7 +24,7 @@ public class AddActivity extends AppCompatActivity {
         edtPrice = findViewById(R.id.edt_price_product);
         btnAddProduct = findViewById(R.id.btn_add_product);
 //        getSupportActionBar().setHomeAsUpIndicator();
-        Intent intent = getIntent();
+//        Intent intent = getIntent();
         btnAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -34,6 +34,8 @@ public class AddActivity extends AppCompatActivity {
 //                MainActivity.adapterProduct.notifyDataSetChanged();
 //                finish();
                 saveProduct();
+                MainActivity.adapterProduct.notifyDataSetChanged();
+
             }
         });
     }
@@ -44,14 +46,16 @@ public class AddActivity extends AppCompatActivity {
             Toast.makeText(this,"Hãy điền đủ thông tin",Toast.LENGTH_SHORT).show();
             return;
         }
-        Intent intent = new Intent();
-        intent.putExtra(KEY_NAME,name);
-        intent.putExtra(KEY_PRICE,price);
-        int id = getIntent().getIntExtra(KEY_ID,-1);
-        if(id!=-1){
-            intent.putExtra(KEY_ID,id);
-        }
-        setResult(RESULT_OK,intent);
+        ProductDBHelper productDBHelper = new ProductDBHelper(AddActivity.this);
+        productDBHelper.addProduct(name,price);
+//        Intent intent = new Intent();
+//        intent.putExtra(KEY_NAME,name);
+//        intent.putExtra(KEY_PRICE,price);
+//        int id = getIntent().getIntExtra(KEY_ID,-1);
+//        if(id!=-1){
+//            intent.putExtra(KEY_ID,id);
+//        }
+//        setResult(RESULT_OK,intent);
         finish();
     }
 

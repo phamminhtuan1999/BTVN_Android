@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        productDBHelperInstance = ProductDBHelper.getInstance(this);
+//        productDBHelperInstance = ProductDBHelper.getInstance(this);
+        productDBHelperInstance = new ProductDBHelper(this);
         database=productDBHelperInstance.getWritableDatabase();
 //        products = productDBHelperInstance.getAllProducts();
 //        products.add(new Product("1","iPhone","300"));
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         rvProduct.hasFixedSize();
         layoutManager = new LinearLayoutManager(this);
         rvProduct.setLayoutManager(layoutManager);
-        adapterProduct = new AdapterProduct(this,getAllItems());
+        adapterProduct = new AdapterProduct(this,productDBHelperInstance);
         rvProduct.setAdapter(adapterProduct);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,14 +68,13 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == ADD_PRODUCT_CODE && resultCode == RESULT_OK) {
             String name = data.getStringExtra(KEY_NAME);
             String price = data.getStringExtra(KEY_PRICE);
-            ContentValues cv = new ContentValues();
-            cv.put(ProductContract.ProductEntry.COLUMN_NAME,name);
-            cv.put(ProductContract.ProductEntry.COLUMN_PRICE,price);
-            database.insert(ProductContract.ProductEntry.TABLE_NAME,null,cv);
+            productDBHelperInstance.addProduct(name,price);
+//            ContentValues cv = new ContentValues();
+//            cv.put(ProductContract.ProductEntry.COLUMN_NAME,name);
+//            cv.put(ProductContract.ProductEntry.COLUMN_PRICE,price);
+//            database.insert(ProductContract.ProductEntry.TABLE_NAME,null,cv);
 //            Product product = new Product(name, price);
 //            productDBHelperInstance.addProduct(product);
-
-            adapterProduct.swapCursor(getAllItems());
         } else if (requestCode == EDIT_PRODUCT_CODE && resultCode == RESULT_OK) {
             int id = data.getIntExtra(KEY_ID, -1);
             if (id == -1) {
@@ -83,22 +83,8 @@ public class MainActivity extends AppCompatActivity {
             String name = data.getStringExtra(KEY_NAME);
             String price = data.getStringExtra(KEY_PRICE);
             Product product = new Product(name, price);
-            product.setID(String.valueOf(id));
-            productDBHelperInstance.updateProduct(product);
+            product.setID(id);
+            productDBHelperInstance.updateProduct(id,name,price);
         }
     }
-
-    private Cursor getAllItems() {
-        return database.query(
-                ProductContract.ProductEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                ProductContract.ProductEntry._ID + " DESC"
-        );
-    }
-
-
 }
