@@ -76,6 +76,18 @@ public class ProductDBHelper extends SQLiteOpenHelper {
 
     }
 
+    public void deleteAll() {
+        try {
+            if (mWritableDB == null) {
+                mWritableDB = getWritableDatabase();
+            }
+            mWritableDB.execSQL("DELETE FROM " + ProductEntry.TABLE_NAME);
+        } catch (Exception e) {
+            Log.d(TAG, "DELETE EXCEPTION! " + e.getMessage());
+        }
+
+    }
+
     public void updateProduct(int id, String name, String price) {
         // New value for one column
         try {

@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     Button btnAdd, btnDelete;
     static List<Product> products;
     ProductDBHelper productDBHelperInstance;
-    SQLiteDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 //        productDBHelperInstance = ProductDBHelper.getInstance(this);
         productDBHelperInstance = new ProductDBHelper(this);
-        database=productDBHelperInstance.getWritableDatabase();
-//        products = productDBHelperInstance.getAllProducts();
 //        products.add(new Product("1","iPhone","300"));
 //        products.add(new Product("2","iPhone","500"));
 //        products.add(new Product("3","iPhone","600"));
@@ -60,31 +57,14 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                productDBHelperInstance.deleteAll();
+                adapterProduct.notifyDataSetChanged();
+            }
+        });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADD_PRODUCT_CODE && resultCode == RESULT_OK) {
-            String name = data.getStringExtra(KEY_NAME);
-            String price = data.getStringExtra(KEY_PRICE);
-            productDBHelperInstance.addProduct(name,price);
-//            ContentValues cv = new ContentValues();
-//            cv.put(ProductContract.ProductEntry.COLUMN_NAME,name);
-//            cv.put(ProductContract.ProductEntry.COLUMN_PRICE,price);
-//            database.insert(ProductContract.ProductEntry.TABLE_NAME,null,cv);
-//            Product product = new Product(name, price);
-//            productDBHelperInstance.addProduct(product);
-        } else if (requestCode == EDIT_PRODUCT_CODE && resultCode == RESULT_OK) {
-            int id = data.getIntExtra(KEY_ID, -1);
-            if (id == -1) {
-                return;
-            }
-            String name = data.getStringExtra(KEY_NAME);
-            String price = data.getStringExtra(KEY_PRICE);
-            Product product = new Product(name, price);
-            product.setID(id);
-            productDBHelperInstance.updateProduct(id,name,price);
-        }
-    }
 }
